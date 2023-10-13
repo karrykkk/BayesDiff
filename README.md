@@ -8,6 +8,9 @@ This repository is our codebase for [arxiv](https://arxiv.org/submit/5168441/add
 ## Installation
 
 ```shell
+conda create --name BayesDiff python==3.8
+conda activate BayesDiff
+conda install pip
 git clone https://github.com/karrykkk/BayesDiff.git
 cd BayesDiff
 pip install -r requirements.txt
