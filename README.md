@@ -17,7 +17,9 @@ pip install -r requirements.txt
 ```
 
 ## Usage
-
+#### Download pre-trained model checkpoint
+#### Download data to fit last-layer Laplace (LLLA)
+#### Sample and estimate corresponding pixel-wise uncertainty
 
 
 ## Citation
