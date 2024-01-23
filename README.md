@@ -15,6 +15,15 @@ git clone https://github.com/karrykkk/BayesDiff.git
 cd BayesDiff
 pip install -r requirements.txt
 ```
+## Framework
+This repository integrates uncertainty quantification into three distinct models, each in its own folder: 
+
+1. ddpm_and_guided - [Guided Diffusion Repository Link](https://github.com/openai/guided-diffusion)
+2. uvit - [U-ViT Repository Link](https://github.com/baofff/U-ViT)
+3. sd - [Stable Diffusion Repository Link](https://github.com/CompVis/stable-diffusion)
+
+Each folder contains a specific model emerged with uncertainty quantification techniques.
+
 
 ## Usage
 #### Download pre-trained model checkpoint
