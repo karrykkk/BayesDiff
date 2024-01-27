@@ -139,6 +139,12 @@ def main():
         type=str,
         help="if specified, load prompts from this file",
     )
+    parser.add_argument(
+        "--laion_art_path",
+        type=str,)
+    parser.add_argument(
+        "--local_image_path",
+        type=str,)
     parser.add_argument("--mc_size", type=int, default=10)
     parser.add_argument("--sample_batch_size", type=int, default=8)
     parser.add_argument("--train_la_batch_size", type=int, default=4)
@@ -182,7 +188,7 @@ def main():
         c = model.get_learned_conditioning(opt.prompt)
         c = torch.concat(opt.sample_batch_size * [c], dim=0)
         uc = model.get_learned_conditioning(opt.sample_batch_size * [""])
-        exp_dir = f'/home///ddim_skipUQ/txt2img/cfg{opt.scale}_{opt.prompt}_train{opt.train_la_data_size}_step{opt.timesteps}_S{opt.mc_size}/'
+        exp_dir = f'./ddim_exp/skipUQ/cfg{opt.scale}_{opt.prompt}_train{opt.train_la_data_size}_step{opt.timesteps}_S{opt.mc_size}/'
         os.makedirs(exp_dir, exist_ok=True)
 
 #########   start sample  ########## 
@@ -201,7 +207,7 @@ def main():
                     c = model.get_learned_conditioning(prompts)
                     c = torch.concat(opt.sample_batch_size * [c], dim=0)
                     uc = model.get_learned_conditioning(opt.sample_batch_size * [""])
-                    exp_dir = f'/home///ddim_skipUQ/txt2img/cfg{opt.scale}_{prompts}_train{opt.train_la_data_size}_step{opt.timesteps}_S{opt.mc_size}/'
+                    exp_dir = f'./ddim_exp/skipUQ/cfg{opt.scale}_{prompts}_train{opt.train_la_data_size}_step{opt.timesteps}_S{opt.mc_size}/'
                     os.makedirs(exp_dir, exist_ok=True)
                     
                     for loop in tqdm(
