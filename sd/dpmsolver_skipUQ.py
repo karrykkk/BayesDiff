@@ -153,6 +153,12 @@ def main():
         default="time_uniform",
         help="skip according to ('uniform' or 'quadratic' for DDIM/DDPM; 'logSNR' or 'time_uniform' or 'time_quadratic' for DPM-Solver)",
     )
+    parser.add_argument(
+        "--laion_art_path",
+        type=str,)
+    parser.add_argument(
+        "--local_image_path",
+        type=str,)
     parser.add_argument("--mc_size", type=int, default=3)
     parser.add_argument("--sample_batch_size", type=int, default=8)
     parser.add_argument("--train_la_batch_size", type=int, default=4)
@@ -237,7 +243,7 @@ def main():
     #########   start sample  ########## 
     c = model.get_learned_conditioning(opt.prompt)
     c = torch.concat(opt.sample_batch_size * [c], dim=0)
-    exp_dir = f'/home///dpm_solver_2_exp/skipUQ/txt2img/{opt.prompt}_train{opt.train_la_data_size}_step{opt.timesteps}_S{opt.mc_size}/'
+    exp_dir = f'./dpm_solver_2_exp/skipUQ/{opt.prompt}_train{opt.train_la_data_size}_step{opt.timesteps}_S{opt.mc_size}/'
     os.makedirs(exp_dir, exist_ok=True)
     total_n_samples = 96
     if total_n_samples % opt.sample_batch_size != 0:
