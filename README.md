@@ -29,7 +29,7 @@ Each folder contains a specific model emerged with uncertainty quantification te
 #### Download pre-trained model checkpoint
 Download [Stable Diffusion v1.5](https://huggingface.co/runwayml/stable-diffusion-v1-5/blob/main/v1-5-pruned-emaonly.ckpt) to `your_local_model_path` 
 #### Download data to fit last-layer Laplace (LLLA)
-Please download [subset of laion-art](https://drive.google.com/drive/folders/1nL7JQ9bChcCC7LCa3f81kq6LhvRHehYT?usp=drive_link) to `your_local_image_path`. These images is a subset from the [LAION-Art dataset](https://huggingface.co/datasets/laion/laion-art), store it in `your_laion_art_path`. This will allow you to retrieve the corresponding prompts for the downloaded images. Note that a subset of approximately 1000 images is sufficient for effectively fitting the LLLA. 
+Please download [subset of laion-art](https://drive.google.com/drive/folders/1nL7JQ9bChcCC7LCa3f81kq6LhvRHehYT?usp=drive_link) to `your_local_image_path`. These images is a subset from the [LAION-Art dataset](https://huggingface.co/datasets/laion/laion-art/laion-art.parquet), store it in `your_laion_art_path`. This will allow you to retrieve the corresponding prompts for the downloaded images. Note that a subset of approximately 1000 images is sufficient for effectively fitting the LLLA. 
 #### Sample and estimate corresponding pixel-wise uncertainty
 In the file `sd.sh`, you will find a template for usage. Please adjust this template to match your local file path and the specific prompt you intend to use.
 ```shell
