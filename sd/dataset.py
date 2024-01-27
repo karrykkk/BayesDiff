@@ -36,13 +36,13 @@ class laion_dataset(torch.utils.data.Dataset):
     def __init__(self, model, opt):
 
         super().__init__()
-        table = pq.read_table('/home///DiffusionUQ/sd/data/laion-art/laion-art.parquet')
-        self.image_path = '/home///DiffusionUQ/sd/data/laion-art/image_from_url'
+        table = pq.read_table(opt.laion_art_path)
+        self.image_path = opt.local_image_path
         # dirs = os.listdir(self.image_path)
         # print(len(dirs))
         self.entries = os.listdir(self.image_path)
         self.df = table.to_pandas()
-        print(self.df.shape[0])
+        # print(self.df.shape[0])
         self.model = model
         self.opt = opt
         self.image_size = 512
@@ -56,7 +56,7 @@ class laion_dataset(torch.utils.data.Dataset):
         
         subpath = self.entries[idx]
         x_path = os.path.join(self.image_path, subpath)
-        txt = self.df.iloc[int(subpath[:-4]), 1]
+        txt = self.df.iloc[int(subpath[:-4]), 1] # obtain the corresponding prompt for this image
         x = Image.open(x_path)
         x = x.convert("RGB")       
         x = center_crop_arr(x, self.image_size)
