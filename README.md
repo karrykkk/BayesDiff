@@ -55,16 +55,30 @@ cd sd
 #### Download pre-trained model checkpoint
 Download [Stable Diffusion v1.5](https://huggingface.co/runwayml/stable-diffusion-v1-5/blob/main/v1-5-pruned-emaonly.ckpt) to `your_local_model_path` 
 #### Download data to fit last-layer Laplace (LLLA)
-Please download [subset of laion-art](https://drive.google.com/drive/folders/1nL7JQ9bChcCC7LCa3f81kq6LhvRHehYT?usp=drive_link) to `your_local_image_path`. These images is a subset from the [LAION-Art dataset](https://huggingface.co/datasets/laion/laion-art/laion-art.parquet), store it in `your_laion_art_path`. This will allow you to retrieve the corresponding prompts for the downloaded images. Note that a subset of approximately 1000 images is sufficient for effectively fitting the LLLA. 
+Please download [subset of laion-art](https://drive.google.com/drive/folders/1nL7JQ9bChcCC7LCa3f81kq6LhvRHehYT?usp=drive_link) to `your_local_image_path`. These images is a subset from the [LAION-Art dataset](https://huggingface.co/camenduru/laion-art/blob/main/laion-art.parquet), store it in `your_laion_art_path`. This will allow you to retrieve the corresponding prompts for the downloaded images. Note that a subset of approximately 1000 images is sufficient for effectively fitting the LLLA. 
 #### Sample and estimate corresponding pixel-wise uncertainty
 In the file `sd.sh`, you will find a template for usage. Please adjust this template to match your local file path and the specific prompt you intend to use.
 ```shell
 bash sd.sh
 ```
 ### 3. U-ViT
-
+```shell
+cd uvit
+```
+#### Download pre-trained model checkpoint
+- Download Autoencoder from this [link](https://drive.google.com/drive/folders/1yo-XhqbPue3rp5P57j6QbA5QZx6KybvP?usp=sharing) which contains image autoencoders converted from Stable Diffusion) to `your_local_encoder_path`. Put the downloaded directory as assets/stable-diffusion in this codebase. The autoencoders are used in latent diffusion models.)[ImageNet 256x256 (U-ViT-H/2)](https://drive.google.com/file/d/13StUdrjaaSXjfqqF7M47BzPyhMAArQ4u/view?usp=share_link) to `your_local_uvit_path`.
+#### Download data to fit last-layer Laplace (LLLA)
+- Please download [Imagenet](https://www.image-net.org/download.php) to `your_local_image_path`.
+- Change the `self.image_path` attribute of class imagenet_feature_dataset in `la_train_datasets.py` to `your_local_image_path`.
+```shell
+vim la_train_datasets.py
+```
+#### Sample and estimate corresponding pixel-wise uncertainty
+In the file `dpm.sh`, you will find a template for usage. Please adjust this template to match your local file path.
+```shell
+bash dpm.sh
+```
 ## Citation
-
 If you find out work useful, please cite our paper at:
 
 ```
