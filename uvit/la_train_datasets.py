@@ -72,7 +72,7 @@ class imagenet_feature_dataset(torch.utils.data.Dataset):
     def __init__(self, args, config, ae):
 
         super().__init__()
-        self.image_path = '/data/Largedata/ImageNet/train'
+        self.image_path = 'your_local_image_path'
         self.paths, self.classes, _ = list_image_files_and_class_recursively(self.image_path)
         self.image_size = config.dataset.image_size
         self.config = config
