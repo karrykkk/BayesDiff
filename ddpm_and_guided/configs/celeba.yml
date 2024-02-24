@@ -25,7 +25,7 @@ model:
     ema_rate: 0.9999
     ema: True
     resamp_with_conv: True
-    ckpt_dir: "/home///ddpm_ckpt/celeba/ckpt.pth"
+    ckpt_dir: "your_local_model_path.pth"
 
 diffusion:
     beta_schedule: linear
