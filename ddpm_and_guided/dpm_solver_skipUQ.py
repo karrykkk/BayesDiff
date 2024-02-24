@@ -1,4 +1,4 @@
-from utils import exp_iteration, var_iteration, \
+from dpmUQ_utils import exp_iteration, var_iteration, \
 inverse_data_transform, sample_from_gaussion, \
 NoiseScheduleVP, get_model_input_time, singlestep_dpm_solver_second_update
 import torch
