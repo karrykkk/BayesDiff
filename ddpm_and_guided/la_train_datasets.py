@@ -299,7 +299,7 @@ class celeba_dataset(torch.utils.data.Dataset):
         super().__init__()
         self.config = config
         self.args = args
-        self.folder = "/data///celeba/celeba"
+        self.folder = "your_local_image_path/celeba"
         cx = 89
         cy = 121
         x1 = cy - 64
@@ -357,7 +357,7 @@ class imagenet_dataset(torch.utils.data.Dataset):
     def __init__(self, args, config):
 
         super().__init__()
-        self.image_path = '/data/Largedata/ImageNet/train'
+        self.image_path = 'your_local_image_path/train'
         self.paths, self.classes, _ = list_image_files_and_class_recursively(self.image_path)
         self.image_size = config.data.image_size
         self.config = config
