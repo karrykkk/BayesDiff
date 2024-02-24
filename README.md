@@ -21,7 +21,7 @@ This repository integrates uncertainty quantification into three models, each in
 2. sd - [Stable Diffusion Repository Link](https://github.com/CompVis/stable-diffusion)
 3. uvit - [U-ViT Repository Link](https://github.com/baofff/U-ViT)
 
-Each folder contains a custom_model that emerged with uncertainty quantification techniques.
+Each folder contains a `custom_model.py` that emerged with uncertainty quantification techniques.
 
 ## Usage
 ### 1. Guided Diffusion
