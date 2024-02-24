@@ -101,6 +101,8 @@ def parse_args_and_config():
     parser.add_argument("--sample_batch_size", type=int, default=16)
     parser.add_argument("--train_la_data_size", type=int, default=50)
     parser.add_argument("--total_n_sample", type=int, default=50)
+    parser.add_argument("--encoder_path", type=str)
+    parser.add_argument("--uvit_path", type=str)
     args = parser.parse_args()
     
     if args.config == "imagenet256_uvit_huge.py":
@@ -134,7 +136,7 @@ def main():
     else:
         fixed_classes = torch.randint(low=args.fixed_class, high=args.fixed_class+1, size=(args.sample_batch_size, n_rounds)).to(device)
     
-    ae = autoencoder.get_model("/home///DiffusionUQ/uvit/assets/stable-diffusion/autoencoder_kl_ema.pth")
+    ae = autoencoder.get_model(args.encoder_path)
     ae.to(device)
 
     @torch.cuda.amp.autocast()
@@ -151,7 +153,7 @@ def main():
         conv=False)
 
     nnet.to(device)
-    nnet.load_state_dict(torch.load(f'/home///uvit_ckpt/imagenet{image_size}_uvit_huge.pth', map_location={'cuda:%d' % 0: 'cuda:%d' % args.device}))
+    nnet.load_state_dict(torch.load(args.uvit_path, map_location={'cuda:%d' % 0: 'cuda:%d' % args.device}))
     nnet.eval()
     train_dataset= imagenet_feature_dataset(args = args, config = config, ae = ae)
     train_dataloader= torch.utils.data.DataLoader(train_dataset, batch_size=args.train_la_batch_size, shuffle=True)
@@ -202,19 +204,16 @@ def main():
     #########   get skip UQ rules  ##########  
     # if uq_array[i] == False, then we use origin_dpmsolver_update from t_seq[i] to t_seq[i-1]
     uq_array = [False] * (args.timesteps//2+1)
-    # for i in range(args.timesteps//2, 0, -5):
-    #     uq_array[i] = True
+    for i in range(args.timesteps//2, 0, -5):
+        uq_array[i] = True
     
-    # fid_dir = f'/data///FID/new_compare/skip/dpm_256/tube_1/'
-    fid_dir = f'/data///FID/new_compare/origin/tube_1/dpm_512/'
-    print(f'uq_array is {uq_array}, fid_dir is {fid_dir}')
     #########   start sample  ##########
-    # exp_dir = f'/home///dpm_solver_2_exp/skipUQ/imagenet{image_size}/{args.fixed_class}_train%{args.train_la_data_size}_step{args.timesteps}_S{args.mc_size}/'
-    # os.makedirs(exp_dir, exist_ok=True)
+    exp_dir = f'../exp/imagenet{image_size}/dpmUQ_fixed_class{args.fixed_class}_train%{args.train_la_data_size}_step{args.timesteps}_S{args.mc_size}/'
+    os.makedirs(exp_dir, exist_ok=True)
     var_sum = torch.zeros((args.sample_batch_size, n_rounds)).to(device)
     img_id = 1000000
-    # sample_x = []
-    # samle_batch_size = args.sample_batch_size
+    sample_x = []
+    samle_batch_size = args.sample_batch_size
     with torch.no_grad():
         for loop in tqdm.tqdm(
             range(n_rounds), desc="Generating image samples for FID evaluation."
@@ -325,49 +324,33 @@ def main():
 
             ###### Save variance and sample image  ######         
             var_sum[:, loop] = var_xt_next.sum(dim=(1,2,3))
-            # def decode_large_batch(_batch):
-            #     if z_size == 32:
-            #         decode_mini_batch_size = 8  # use a small batch size since the decoder is large
-            #     else:
-            #         decode_mini_batch_size = 1  # use a small batch size since the decoder is large
-            #     xs = []
-            #     pt = 0
-            #     for _decode_mini_batch_size in amortize(_batch.size(0), decode_mini_batch_size):
-            #         x = decode(_batch[pt: pt + _decode_mini_batch_size])
-            #         pt += _decode_mini_batch_size
-            #         xs.append(x)
-            #     xs = torch.concat(xs, dim=0)
-            #     assert xs.size(0) == _batch.size(0)
-            #     return xs
-            # x = inverse_data_transform(decode_large_batch(xt_next))
-            # sample_x.append(x)
-            
-            os.makedirs(os.path.join(fid_dir, 'ld_sam/'), exist_ok=True)
-            os.makedirs(os.path.join(fid_dir, 'ld_var/'), exist_ok=True)
-            for i in range(xt_next.shape[0]):
-                path = os.path.join(fid_dir, 'ld_sam/', f"{img_id}.pt")
-                var_path = os.path.join(fid_dir, 'ld_var/', f"{img_id}.pt")
-                torch.save(xt_next[i], path)
-                torch.save(var_xt_next.sum(dim=(1,2,3))[i].cpu(), var_path)
-                img_id +=1
-            # os.makedirs(os.path.join(fid_dir, 'sam/'), exist_ok=True)
-            # for i in range(x.shape[0]):
-            #     path = os.path.join(fid_dir, 'sam/', f"{img_id}.png")
-            #     tvu.save_image(x[i], path)
-            #     img_id += 1
+            def decode_large_batch(_batch):
+                if z_size == 32:
+                    decode_mini_batch_size = 8  # use a small batch size since the decoder is large
+                else:
+                    decode_mini_batch_size = 1  # use a small batch size since the decoder is large
+                xs = []
+                pt = 0
+                for _decode_mini_batch_size in amortize(_batch.size(0), decode_mini_batch_size):
+                    x = decode(_batch[pt: pt + _decode_mini_batch_size])
+                    pt += _decode_mini_batch_size
+                    xs.append(x)
+                xs = torch.concat(xs, dim=0)
+                assert xs.size(0) == _batch.size(0)
+                return xs
+            x = inverse_data_transform(decode_large_batch(xt_next))
+            sample_x.append(x)          
 
-        # sample_x = torch.concat(sample_x, dim=0)
+        sample_x = torch.concat(sample_x, dim=0)
         var = []
         for j in range(n_rounds):
             var.append(var_sum[:, j])
-        # var = torch.concat(var, dim=0)
-        # sorted_var, sorted_indices = torch.sort(var, descending=True)
-        # reordered_sample_x = torch.index_select(sample_x, dim=0, index=sorted_indices.int())
-        # grid_sample_x = tvu.make_grid(reordered_sample_x, nrow=8, padding=2)
-        # tvu.save_image(grid_sample_x.cpu().float(), os.path.join(exp_dir, "sorted_sample.png"))
-
-        print(f'Sampling {total_n_samples} images in {fid_dir}')
-        torch.save(var_sum.cpu(), os.path.join(fid_dir, 'var_sum.pt'))
+        var = torch.concat(var, dim=0)
+        sorted_var, sorted_indices = torch.sort(var, descending=True)
+        reordered_sample_x = torch.index_select(sample_x, dim=0, index=sorted_indices.int())
+        grid_sample_x = tvu.make_grid(reordered_sample_x, nrow=8, padding=2)
+        tvu.save_image(grid_sample_x.cpu().float(), os.path.join(exp_dir, "sorted_sample.png"))
+        
 
 if __name__ == "__main__":
     main()
