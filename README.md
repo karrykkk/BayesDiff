@@ -1,6 +1,5 @@
 # BayesDiff:  Estimating Pixel-wise Uncertainty in Diffusion via Bayesian Inference
-This repository is our codebase for [arxiv](https://arxiv.org/submit/5168441/addfiles). Our paper is currently under review. We will provide more detailed guide soon.
-
+This repository is our codebase for [BayesDiff](https://arxiv.org/submit/5168441/addfiles).
 <p align="center">
   <img width="80%" src="/intro_00.png"/>
 </p>
@@ -16,16 +15,40 @@ cd BayesDiff
 pip install -r requirements.txt
 ```
 ## Framework
-This repository integrates uncertainty quantification into three distinct models, each in its own folder: 
+This repository integrates uncertainty quantification into three models, each in its own folder: 
 
 1. ddpm_and_guided - [Guided Diffusion Repository Link](https://github.com/openai/guided-diffusion)
-2. uvit - [U-ViT Repository Link](https://github.com/baofff/U-ViT)
-3. sd - [Stable Diffusion Repository Link](https://github.com/CompVis/stable-diffusion)
+2. sd - [Stable Diffusion Repository Link](https://github.com/CompVis/stable-diffusion)
+3. uvit - [U-ViT Repository Link](https://github.com/baofff/U-ViT)
 
-Each folder contains a specific model emerged with uncertainty quantification techniques.
+Each folder contains a custom_model that emerged with uncertainty quantification techniques.
 
 ## Usage
-3. Stable Diffusion
+### 1. Guided Diffusion
+```shell
+cd ddpm_and_guided
+```
+#### Download pre-trained model checkpoint
+- Download [imagenet 128x128 ckpt of Guided Diffusion](https://openaipublic.blob.core.windows.net/diffusion/jul-2021/128x128_diffusion.pt) to `your_local_model_path`
+- Change the model_path in configs to `your_local_model_path`.
+```shell
+cd configs
+vim imagenet128_guided.yml
+```
+#### Download data to fit last-layer Laplace (LLLA)
+- Please download [Imagenet](https://www.image-net.org/download.php) to `your_local_image_path`.
+- Change the self.image_path of class imagenet_dataset in 'la_train_datasets.py' to `your_local_image_path`.
+#### Sample and estimate corresponding pixel-wise uncertainty
+In the file `dpm.sh`, you will find a template for usage for UQ-itegrated dpm-solver-2 sampler. By running this bash script, you can get the 'sorted_sample.png' based on the image-wise uncertainty metric.
+```shell
+bash dpm.sh
+```
+For other samplers, just change 'dpm.sh' to 'ddpm.sh' or 'ddim.sh'.
+
+### 2. Stable Diffusion
+```shell
+cd sd
+```
 #### Download pre-trained model checkpoint
 Download [Stable Diffusion v1.5](https://huggingface.co/runwayml/stable-diffusion-v1-5/blob/main/v1-5-pruned-emaonly.ckpt) to `your_local_model_path` 
 #### Download data to fit last-layer Laplace (LLLA)
@@ -33,9 +56,9 @@ Please download [subset of laion-art](https://drive.google.com/drive/folders/1nL
 #### Sample and estimate corresponding pixel-wise uncertainty
 In the file `sd.sh`, you will find a template for usage. Please adjust this template to match your local file path and the specific prompt you intend to use.
 ```shell
-cd sd
 bash sd.sh
 ```
+### 3. U-ViT
 
 ## Citation
 
