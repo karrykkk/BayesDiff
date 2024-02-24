@@ -66,7 +66,7 @@ bash sd.sh
 cd uvit
 ```
 #### Download pre-trained model checkpoint
-- Download Autoencoder from this [link](https://drive.google.com/drive/folders/1yo-XhqbPue3rp5P57j6QbA5QZx6KybvP?usp=sharing) which contains image autoencoders converted from Stable Diffusion) to `your_local_encoder_path`. Put the downloaded directory as assets/stable-diffusion in this codebase. The autoencoders are used in latent diffusion models.)[ImageNet 256x256 (U-ViT-H/2)](https://drive.google.com/file/d/13StUdrjaaSXjfqqF7M47BzPyhMAArQ4u/view?usp=share_link) to `your_local_uvit_path`.
+- Download Autoencoder's ckpt from this [link](https://drive.google.com/drive/folders/1yo-XhqbPue3rp5P57j6QbA5QZx6KybvP?usp=sharing) which contains image autoencoders converted from Stable Diffusion to `your_local_encoder_path`. Download [ImageNet 256x256 (U-ViT-H/2)](https://drive.google.com/file/d/13StUdrjaaSXjfqqF7M47BzPyhMAArQ4u/view?usp=share_link) to `your_local_uvit_path`.
 #### Download data to fit last-layer Laplace (LLLA)
 - Please download [Imagenet](https://www.image-net.org/download.php) to `your_local_image_path`.
 - Change the `self.image_path` attribute of class imagenet_feature_dataset in `la_train_datasets.py` to `your_local_image_path`.
