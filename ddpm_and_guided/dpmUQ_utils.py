@@ -29,6 +29,35 @@ def inverse_data_transform(config, X):
 
     return torch.clamp(X, 0.0, 1.0)
 
+## dpm_solver sampling without UQ integrated
+def origin_singlestep_dpm_solver_second_update(ns, x, s, t, custom_uvit, model_s, r1=0.5, **model_kwargs):
+    lambda_s, lambda_t = ns.marginal_lambda(s), ns.marginal_lambda(t)
+    h = lambda_t - lambda_s
+    lambda_s1 = lambda_s + r1 * h
+    s1 = ns.inverse_lambda(lambda_s1)
+    log_alpha_s, log_alpha_s1, log_alpha_t = ns.marginal_log_mean_coeff(s), ns.marginal_log_mean_coeff(s1), ns.marginal_log_mean_coeff(t)
+    sigma_s1, sigma_t = ns.marginal_std(s1), ns.marginal_std(t)
+
+    phi_11 = torch.expm1(r1 * h)
+    phi_1 = torch.expm1(h)
+    
+    x_s1 = (
+        torch.exp(log_alpha_s1 - log_alpha_s) * x
+        - (sigma_s1 * phi_11) * model_s
+    )
+
+    input_s1 = get_model_input_time(ns, s1)
+    model_s1 = custom_uvit.accurate_forward(x_s1, input_s1.expand(x_s1.shape[0]), **model_kwargs)
+
+    x_t = (
+        torch.exp(log_alpha_t - log_alpha_s) * x
+        - (sigma_t * phi_1) * model_s
+        - (0.5 / r1) * (sigma_t * phi_1) * (model_s1 - model_s)
+    )
+
+    return x_t
+
+## dpm_solver sampling with UQ integrated
 def singlestep_dpm_solver_second_update(ns, x, s, t, custom_uvit, model_s, r1=0.5, **model_kwargs):
     """
     Singlestep solver DPM-Solver-2 from time `s` to time `t`.
@@ -84,33 +113,6 @@ def exp_iteration(exp_xt, ns, s, t, mc_eps_exp_s1, r1=0.5):
     exp_xt_next = torch.exp(log_alpha_t - log_alpha_s) * exp_xt - (sigma_t * phi_1) * mc_eps_exp_s1
 
     return exp_xt_next
-
-def origin_singlestep_dpm_solver_second_update(ns, x, s, t, custom_uvit, model_s, r1=0.5, **model_kwargs):
-    lambda_s, lambda_t = ns.marginal_lambda(s), ns.marginal_lambda(t)
-    h = lambda_t - lambda_s
-    lambda_s1 = lambda_s + r1 * h
-    s1 = ns.inverse_lambda(lambda_s1)
-    log_alpha_s, log_alpha_s1, log_alpha_t = ns.marginal_log_mean_coeff(s), ns.marginal_log_mean_coeff(s1), ns.marginal_log_mean_coeff(t)
-    sigma_s1, sigma_t = ns.marginal_std(s1), ns.marginal_std(t)
-
-    phi_11 = torch.expm1(r1 * h)
-    phi_1 = torch.expm1(h)
-    
-    x_s1 = (
-        torch.exp(log_alpha_s1 - log_alpha_s) * x
-        - (sigma_s1 * phi_11) * model_s
-    )
-
-    input_s1 = get_model_input_time(ns, s1)
-    model_s1 = custom_uvit.accurate_forward(x_s1, input_s1.expand(x_s1.shape[0]), **model_kwargs)
-
-    x_t = (
-        torch.exp(log_alpha_t - log_alpha_s) * x
-        - (sigma_t * phi_1) * model_s
-        - (0.5 / r1) * (sigma_t * phi_1) * (model_s1 - model_s)
-    )
-
-    return x_t
 
 def var_iteration(var_xt, ns, s, t, cov_xt_epst, var_epst, r1=0.5):
     lambda_s, lambda_t = ns.marginal_lambda(s), ns.marginal_lambda(t)
