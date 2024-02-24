@@ -42,11 +42,11 @@ vim imagenet128_guided.yml
 vim la_train_datasets.py
 ```
 #### Sample and estimate corresponding pixel-wise uncertainty
-In the file `dpm.sh`, you will find a template for usage for UQ-itegrated dpm-solver-2 sampler. By running this bash script, you can get the 'sorted_sample.png' based on the image-wise uncertainty metric.
+In the file `dpm.sh`, you will find a template for usage for UQ-itegrated dpm-solver-2 sampler. By running this bash script, you can get the `sorted_sample.png` based on the image-wise uncertainty metric.
 ```shell
 bash dpm.sh
 ```
-For other samplers, just change 'dpm.sh' to 'ddpm.sh' or 'ddim.sh'.
+For other samplers, just change `dpm.sh` to `ddpm.sh` or `ddim.sh`.
 
 ### 2. Stable Diffusion
 ```shell
