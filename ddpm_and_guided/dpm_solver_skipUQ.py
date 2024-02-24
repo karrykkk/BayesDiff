@@ -311,20 +311,16 @@ def main():
     t_T = ns.T
     t_seq = get_orders_and_timesteps_for_singlestep_solver(steps= args.timesteps, t_T=t_T, t_0=t_0, skip_type=args.skip_type, device=args.device)
     t_seq = torch.flip(t_seq, dims=[0])
-    print(t_seq.shape)
+
 #########   get skip UQ rules  ##########  
 # if uq_array[i] == False, then we use origin_dpmsolver_update from t_seq[i] to t_seq[i-1]
     uq_array = [False] * (args.timesteps//2+1)
     for i in range(args.timesteps//2, 0, -5):
         uq_array[i] = True
-    print(uq_array)
 
-    # fid_dir = f'/data///FID/new_compare/origin/dpm_128/tube_1'
-    # fid_dir = f'/data///FID/new_compare/orgin/ddim_128'
-    # print(f'uq_array is {uq_array}, fid_dir is {fid_dir}')
 #########   start sample  ########## 
-    exp_dir = f'/home///dpm_solver_2_exp/skipUQ/{diffusion.config.data.dataset}/{args.fixed_class}_train%{args.train_la_data_size}_step{args.timesteps}_S{args.mc_size}/'
-    # os.makedirs(exp_dir, exist_ok=True)
+    exp_dir = f'../exp/{diffusion.config.data.dataset}/dpm_solver_2_fixed_class{args.fixed_class}_train%{args.train_la_data_size}_step{args.timesteps}_S{args.mc_size}/'
+    os.makedirs(exp_dir, exist_ok=True)
     total_n_samples = args.total_n_sample
     if total_n_samples % args.sample_batch_size != 0:
         raise ValueError("Total samples for sampling must be divided exactly by args.sample_batch_size, but got {} and {}".format(total_n_samples, args.sample_batch_size))
@@ -457,15 +453,7 @@ def main():
                 
             var_sum[:, loop] = var_xt_next.sum(dim=(1,2,3))    
             x = inverse_data_transform(config, xt_next)
-            sample_x.append(x)         
-            os.makedirs(os.path.join(exp_dir, 'sam/'), exist_ok=True)
-            # os.makedirs(os.path.join(fid_dir, 'var/'), exist_ok=True)
-            for i in range(x.shape[0]):
-                path = os.path.join(exp_dir, 'sam/', f"{img_id}.png")
-                # var_path = os.path.join(fid_dir, 'var/', f"{img_id}.pt")
-                tvu.save_image(x[i], path)
-                # torch.save(var_xt_next.sum(dim=(1,2,3))[i].cpu(), var_path)
-                img_id += 1
+            sample_x.append(x)
 
         sample_x = torch.concat(sample_x, dim=0)
         var = []
@@ -476,9 +464,6 @@ def main():
         reordered_sample_x = torch.index_select(sample_x, dim=0, index=sorted_indices.int())
         grid_sample_x = make_grid(reordered_sample_x, nrow=12, padding=1)
         tvu.save_image(grid_sample_x.cpu().float(), os.path.join(exp_dir, "sorted_sample.png"))
-
-        # print(f'Sampling {total_n_samples} images in {fid_dir}')
-        # torch.save(var_sum.cpu(), os.path.join(fid_dir, 'var_sum.pt'))
 
 if __name__ == "__main__":
     main()
