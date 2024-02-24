@@ -436,27 +436,18 @@ def main():
             var_sum[:, loop] = var_xt_next.sum(dim=(1,2,3))    
             x = inverse_data_transform(config, xt_next)
             sample_x.append(x)
-            # fid_dir = f'/data///FID/origin/{diffusion.config.data.dataset}/{args.fixed_class}_train%{args.train_la_data_size}_step{args.timesteps}_S{args.mc_size}/'
-            fid_dir = f'/data///FID/compare/skip/ddpm_64/'
-            os.makedirs(os.path.join(fid_dir, 'sam/'), exist_ok=True)
-            for i in range(x.shape[0]):
-                path = os.path.join(fid_dir, 'sam/', f"{img_id}.png")
-                tvu.save_image(x[i], path)
-                img_id += 1
-        # exp_dir = f'/home///ddpm_exp/skipUQ/{diffusion.config.data.dataset}/{args.fixed_class}_train%{args.train_la_data_size}_step{args.timesteps}_S{args.mc_size}/'
-        # os.makedirs(exp_dir, exist_ok=True)
-        # sample_x = torch.concat(sample_x, dim=0)
+            
+        exp_dir = f'./exp/{diffusion.config.data.dataset}/ddpm_exp_fixed_class{args.fixed_class}_train%{args.train_la_data_size}_step{args.timesteps}_S{args.mc_size}/'
+        os.makedirs(exp_dir, exist_ok=True)
+        sample_x = torch.concat(sample_x, dim=0)
         var = []       
         for j in range(n_rounds):
             var.append(var_sum[:, j])
         var = torch.concat(var, dim=0)
-        # sorted_var, sorted_indices = torch.sort(var, descending=True)
-        # reordered_sample_x = torch.index_select(sample_x, dim=0, index=sorted_indices.int())
-        # grid_sample_x = make_grid(reordered_sample_x, nrow=8, padding=2)
-        # tvu.save_image(grid_sample_x.cpu().float(), os.path.join(exp_dir, "sorted_sample.png"))
-        # torch.save(var_sum.cpu(), os.path.join(exp_dir, 'var_sum.pt'))
-        print(f'Sampling {total_n_samples} images in {fid_dir}')
-        torch.save(var_sum.cpu(), os.path.join(fid_dir, 'var_sum.pt'))
+        sorted_var, sorted_indices = torch.sort(var, descending=True)
+        reordered_sample_x = torch.index_select(sample_x, dim=0, index=sorted_indices.int())
+        grid_sample_x = make_grid(reordered_sample_x, nrow=8, padding=2)
+        tvu.save_image(grid_sample_x.cpu().float(), os.path.join(exp_dir, "sorted_sample.png"))
 
 if __name__ == "__main__":
     main()
