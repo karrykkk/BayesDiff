@@ -37,9 +37,9 @@ vim imagenet128_guided.yml
 ```
 #### Download data to fit last-layer Laplace (LLLA)
 - Please download [Imagenet](https://www.image-net.org/download.php) to `your_local_image_path`.
-- Change the self.image_path of class imagenet_dataset in 'la_train_datasets.py' to `your_local_image_path`.
+- Change the `self.image_path` attribute of class imagenet_dataset in `la_train_datasets.py` to `your_local_image_path`.
 ```shell
-vim imagenet128_guided.yml
+vim la_train_datasets.py
 ```
 #### Sample and estimate corresponding pixel-wise uncertainty
 In the file `dpm.sh`, you will find a template for usage for UQ-itegrated dpm-solver-2 sampler. By running this bash script, you can get the 'sorted_sample.png' based on the image-wise uncertainty metric.
