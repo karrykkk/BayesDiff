@@ -8,6 +8,7 @@ total_n_sample="96"
 train_la_data_size="200"
 DIS="uniform"
 fixed_class="10"
+seed=1234
 
 CUDA_VISIBLE_DEVICES=$DEVICES python ddim_skipUQ.py \
 --config $data".yml" --timesteps=$steps --skip_type=$DIS --train_la_batch_size 32 \
