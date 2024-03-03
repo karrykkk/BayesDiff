@@ -284,7 +284,7 @@ def main():
     map_location = {'cuda:%d' % 0: 'cuda:%d' % args.device}
 
     if "ckpt_dir" in diffusion.config.model.__dict__.keys():
-        ckpt_dir = diffusion.config.model.ckpt_dir
+        ckpt_dir = os.path.expanduser(diffusion.config.model.ckpt_dir)
         states = torch.load(
             ckpt_dir,
             map_location=map_location
