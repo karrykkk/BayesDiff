@@ -1,6 +1,6 @@
 # for imagenet dataset
 DEVICES="0"
-data="imagenet"
+data="imagenet128_guided"
 steps="250"
 mc_size="10"
 sample_batch_size="16"
