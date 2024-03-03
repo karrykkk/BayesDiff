@@ -145,7 +145,7 @@ def main():
     
     var_sum = torch.zeros((args.sample_batch_size, n_rounds)).to(device)
     img_id = 1000000
-    exp_dir = f'../exp/{diffusion.config.data.dataset}/ddim_fixed_class{args.fixed_class}_train%{args.train_la_data_size}_step{args.timesteps}_S{args.mc_size}/'
+    exp_dir = f'./exp/{diffusion.config.data.dataset}/ddim_fixed_class{args.fixed_class}_train%{args.train_la_data_size}_step{args.timesteps}_S{args.mc_size}/'
     os.makedirs(exp_dir, exist_ok=True)
     samle_batch_size = args.sample_batch_size
     with torch.no_grad():
