@@ -165,6 +165,7 @@ def main():
     parser.add_argument("--train_la_data_size", type=int, default=16)
     parser.add_argument("--timesteps", type=int, default= 50)
     parser.add_argument('--device', type=int, default=0)
+    parser.add_argument('--total_n_samples',type=int,default=80)
     opt = parser.parse_args()
     print(opt)
     seed_everything(opt.seed)
@@ -245,7 +246,7 @@ def main():
     c = torch.concat(opt.sample_batch_size * [c], dim=0)
     exp_dir = f'./dpm_solver_2_exp/skipUQ/{opt.prompt}_train{opt.train_la_data_size}_step{opt.timesteps}_S{opt.mc_size}/'
     os.makedirs(exp_dir, exist_ok=True)
-    total_n_samples = 96
+    total_n_samples = opt.total_n_samples
     if total_n_samples % opt.sample_batch_size != 0:
         raise ValueError("Total samples for sampling must be divided exactly by opt.sample_batch_size, but got {} and {}".format(total_n_samples, opt.sample_batch_size))
     n_rounds = total_n_samples // opt.sample_batch_size
