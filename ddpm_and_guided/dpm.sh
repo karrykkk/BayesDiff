@@ -9,6 +9,7 @@ total_n_sample="96"
 train_la_data_size="200"
 fixed_class="10"
 DIS="logSNR"
+seed=1234
 
 CUDA_VISIBLE_DEVICES=$DEVICES python dpm_solver_skipUQ.py \
 --config $data".yml" --timesteps=$steps --skip_type=$DIS --train_la_batch_size 16 \
