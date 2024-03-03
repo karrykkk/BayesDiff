@@ -10,6 +10,7 @@ from models.guided_diffusion.unet import UNetModel as GuidedDiffusion_Model
 from models.ema import EMAHelper
 from custom_model import CustomModel
 import torchvision.utils as tvu
+from torchvision.utils import make_grid
 import logging
 import time
 import tqdm
@@ -53,7 +54,7 @@ def main():
     if args.fixed_class == 10000:
         fixed_classes = torch.randint(low=0, high=1000, size=(args.sample_batch_size, n_rounds))
     else:
-        fixed_classes = torch.randint(low=args.fixed_class, high=args.fixed_class+1, size=(args.sample_batch_size,)).to(device)
+        fixed_classes = torch.randint(low=args.fixed_class, high=args.fixed_class+1, size=(args.sample_batch_size,n_rounds)).to(device)
 
 ##########  initialize diffusion and model(unet) ########## 
     diffusion = Diffusion(args, config, rank=device)
@@ -145,6 +146,7 @@ def main():
     
     var_sum = torch.zeros((args.sample_batch_size, n_rounds)).to(device)
     img_id = 1000000
+    sample_x = []
     exp_dir = f'./exp/{diffusion.config.data.dataset}/ddim_fixed_class{args.fixed_class}_train%{args.train_la_data_size}_step{args.timesteps}_S{args.mc_size}/'
     os.makedirs(exp_dir, exist_ok=True)
     samle_batch_size = args.sample_batch_size
@@ -233,7 +235,7 @@ def main():
             var_sum[:, loop] = var_xt_next.sum(dim=(1,2,3))    
             x = inverse_data_transform(config, xt_next)
             var_sum[:, loop] = var_xt_next.sum(dim=(1,2,3))    
-
+            sample_x.append(x)
         sample_x = torch.concat(sample_x, dim=0)
         var = []
         for j in range(n_rounds):
