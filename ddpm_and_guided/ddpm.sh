@@ -13,7 +13,7 @@ fixed_class="0"
 CUDA_VISIBLE_DEVICES=$DEVICES python ddpm_skipUQ.py \
 --config $data".yml" --timesteps=$steps --skip_type=$DIS --train_la_batch_size 32 \
 --mc_size=$mc_size --sample_batch_size=$sample_batch_size --fixed_class=$fixed_class --train_la_data_size=$train_la_data_size \
---total_n_sample=$total_n_sample --fixed_class=$fixed_class
+--total_n_sample=$total_n_sample --fixed_class=$fixed_class --seed=1234
 
 # for CELEBA dataset
 # DEVICES="0"
