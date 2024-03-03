@@ -319,7 +319,7 @@ def main():
         uq_array[i] = True
 
 #########   start sample  ########## 
-    exp_dir = f'../exp/{diffusion.config.data.dataset}/dpm_solver_2_fixed_class{args.fixed_class}_train%{args.train_la_data_size}_step{args.timesteps}_S{args.mc_size}/'
+    exp_dir = f'./exp/{diffusion.config.data.dataset}/dpm_solver_2_fixed_class{args.fixed_class}_train%{args.train_la_data_size}_step{args.timesteps}_S{args.mc_size}/'
     os.makedirs(exp_dir, exist_ok=True)
     total_n_samples = args.total_n_sample
     if total_n_samples % args.sample_batch_size != 0:
