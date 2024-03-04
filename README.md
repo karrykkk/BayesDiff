@@ -78,10 +78,16 @@ In the file `dpm.sh`, you will find a template for usage. Please adjust this tem
 ```shell
 bash dpm.sh
 ```
+## Acknowledgements
+This codebase is based on remarkable projects from the community, including [DPM-Solver](https://github.com/LuChengTHU/dpm-solver), [U-ViT](https://github.com/baofff/U-ViT), [Stable Diffusion](https://github.com/CompVis/stable-diffusion).
+
 ## Citation
 If you find out work useful, please cite our paper at:
-
 ```
-@article{
+@inproceedings{kou2023bayesdiff,
+  title={BayesDiff: Estimating Pixel-wise Uncertainty in Diffusion via Bayesian Inference},
+  author={Kou, Siqi and Gan, Lei and Wang, Dequan and Li, Chongxuan and Deng, Zhijie},
+  booktitle={The Twelfth International Conference on Learning Representations},
+  year={2023}
 }
 ```
