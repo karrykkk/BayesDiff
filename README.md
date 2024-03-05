@@ -1,5 +1,5 @@
 # BayesDiff:  Estimating Pixel-wise Uncertainty in Diffusion via Bayesian Inference
-This repository is our codebase for [BayesDiff](https://arxiv.org/submit/5168441/addfiles).
+This repository is our codebase for [BayesDiff](https://arxiv.org/abs/2310.11142).
 <p align="center">
   <img width="80%" src="/intro_00.png"/>
 </p>
